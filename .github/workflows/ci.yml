@@ -58,9 +58,9 @@ jobs:
     - run: yarn test
 
     - name: Generate tag
-      id: generate_tag
+      id: vars
       run: | 
-       SHA=${echo $GITHUB_SHA | head -c7}
+       SHA=$(echo $GITHUB_SHA | head -c7)
        echo "sha=$SHA" >> $GITHUB_OUTPUT  
 
     - name: Build docker image

@@ -7,7 +7,7 @@ on:
   push:
     # Apenas para a branch main
     branches:
-      - main
+      - master
 
 # Lista de jobs da pipeline
 jobs:

@@ -1,25 +1,61 @@
-name: CI 
+# Nome que aparecerá no GitHub Actions
+name: CI
 
+# Define quais eventos disparam a pipeline
 on:
+  # Executa quando houver um push
   push:
+    # Apenas para a branch main
     branches:
-      - master
+      - main
 
+# Lista de jobs da pipeline
 jobs:
-  build: 
+
+  # Identificador do job
+  build:
+
+    # Nome exibido na interface do GitHub Actions
     name: "Build and Push"
+
+    # Runner (máquina virtual) onde o job será executado
     runs-on: ubuntu-latest
+
+    # Executa o mesmo job para diferentes versões do Node.js
     strategy:
+
+      # Matriz de execução
       matrix:
+
+        # Cria uma execução com Node 18 e outra com Node 20
         node: [18,20]
-    
-    steps: 
+
+    # Sequência de etapas do job
+    steps:
+
+    # Faz checkout do código do repositório
     - uses: actions/checkout@v4
 
+    # Nome amigável da etapa
     - name: Setup node
-      uses: actions/setup-node@v7
+
+      # Action oficial para instalar o Node.js
+      uses: actions/setup-node@v4
+
+      # Configurações da action
       with:
+
+        # Utiliza a versão do Node definida na matriz
         node-version: ${{ matrix.node }}
+
+        # Habilita cache das dependências do Yarn
         cache: 'yarn'
+
+    # Instala as dependências do projeto
     - run: yarn
-    - run: yarn run test 
+
+    # Executa os testes automatizados
+    - run: yarn test
+
+    - name: Build docker image
+      run: docker build -t rocketseat-ci-api:v1 .   

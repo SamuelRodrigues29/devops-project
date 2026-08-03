@@ -70,7 +70,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB.TOKEN }}  
 
     - name: Build docker image
-      run: docker build -t SamuelRodrigues29/devops-project:${{ steps.vars.outputs.sha }} .   
+      run: docker build -t samuel2904/devops-project:${{ steps.vars.outputs.sha }} .   
 
     - name: Push image 
-      run: docker  push SamuelRodrigues29/devops-project:${{ steps.vars.outputs.sha }}
+      run: docker  push samuel2904/devops-project:${{ steps.vars.outputs.sha }}

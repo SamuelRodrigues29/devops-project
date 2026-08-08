@@ -1,57 +1,88 @@
-# compiled output
-/dist
-/node_modules
-/build
+# ==========================
+# Node.js / NestJS
+# ==========================
+
+# Dependências instaladas
+node_modules/
+
+# Código compilado
+dist/
 
 # Logs
-logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
-.yarn/cache
 
-# OS
-.DS_Store
 
-# Tests
-/coverage
-/.nyc_output
+# ==========================
+# Yarn Berry (Yarn 3)
+# ==========================
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# Estado gerado pelo Yarn
+.yarn/install-state.gz
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# Cache local do Yarn
+.yarn/cache/
 
-# dotenv environment variable files
+# Arquivos temporários
+.yarn/unplugged/
+
+# Build artifacts do Yarn
+.yarn/build-state.yml
+
+
+# Manter o Yarn Release versionado
+# Necessário para projetos com Yarn 3
+!.yarn/releases/
+
+
+# ==========================
+# Terraform
+# ==========================
+
+# Diretório gerado pelo terraform init
+**/.terraform/
+
+# Arquivos de estado
+*.tfstate
+*.tfstate.*
+
+# Backup de state
+*.tfstate.backup
+
+# Logs de erro
+crash.log
+crash.*.log
+
+# Arquivos de variáveis sensíveis
+*.tfvars
+*.tfvars.json
+
+
+# ==========================
+# Ambiente
+# ==========================
+
 .env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+.env.*
+!.env.example
 
-# temp directory
-.temp
-.tmp
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# ==========================
+# IDE / Editor
+# ==========================
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+.vscode/
+.idea/
+
+# Arquivos do Windows
+Thumbs.db
+Desktop.ini
+
+
+# ==========================
+# Sistema operacional
+# ==========================
+
+.DS_Store

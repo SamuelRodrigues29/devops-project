@@ -44,6 +44,7 @@ jobs:
         node-version: 24
         # Habilita cache das dependências do Yarn
         cache: 'yarn'
+        cache-dependency-path: api/yarn.lock
 
     - run: yarn
     - run: yarn run test    

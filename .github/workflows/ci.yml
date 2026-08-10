@@ -53,10 +53,14 @@ jobs:
         cache-dependency-path: api/yarn.lock
 
     # Instala as dependências do projeto
-    - run: yarn
+    - name: Install dependencies
+      working-directory: api
+      run: yarn  
 
     # Executa os testes automatizados
-    - run: yarn test
+    - name: Run tests
+      working-directory: api
+      run: yarn test  
 
     - name: Generate tag
       id: generate_tag

@@ -9,6 +9,10 @@ on:
     branches:
       - master
 
+permissions: 
+  id-token: write
+  contents: read       
+
 # Lista de jobs da pipeline
 jobs:
 
@@ -19,16 +23,7 @@ jobs:
     name: "Build and Push"
 
     # Runner (máquina virtual) onde o job será executado
-    runs-on: ubuntu-latest
-
-    # Executa o mesmo job para diferentes versões do Node.js
-    strategy:
-
-      # Matriz de execução
-      matrix:
-
-        # Cria uma execução com Node 18 e outra com Node 20
-        node: [20, 24]
+    runs-on: ubuntu-latest    
 
     # Sequência de etapas do job
     steps:
@@ -46,11 +41,12 @@ jobs:
       with:
 
         # Utiliza a versão do Node definida na matriz
-        node-version: ${{ matrix.node }}
-
+        node-version: 24
         # Habilita cache das dependências do Yarn
         cache: 'yarn'
-        cache-dependency-path: api/yarn.lock
+
+    - run: yarn
+    - run: yarn run test   
 
     # Instala as dependências do projeto
     - name: Install dependencies

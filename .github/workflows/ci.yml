@@ -50,6 +50,7 @@ jobs:
 
         # Habilita cache das dependências do Yarn
         cache: 'yarn'
+        cache-dependency-path: api/yarn.lock
 
     # Instala as dependências do projeto
     - run: yarn

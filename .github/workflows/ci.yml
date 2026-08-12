@@ -46,9 +46,9 @@ jobs:
         cache: 'yarn'
         cache-dependency-path: api/yarn.lock
 
-    - run: yarn
+    - name: Run tests
       working-directory: api  
-    - run: yarn run test    
+      run: yarn run test    
    
 
     - name: Generate tag

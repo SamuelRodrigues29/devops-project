@@ -1,17 +1,36 @@
-resource "aws_iam_openid_connect_provider" "oidc-git" {
+# Provider already exists in this AWS account — reference it instead of creating it.
+data "aws_iam_openid_connect_provider" "oidc-git" {
   url = "https://token.actions.githubusercontent.com"
-  client_id_list = [
-    "sts.amazonaws.com"
-  ]
+}
 
-  thumbprint_list = [
-    "ab9d0263244dd0326eb67015705a667e79cfe998"
-  ]
+import {
+  to = aws_iam_role.ecr-role
+  id = "ecr-role"
+}
 
+resource "aws_iam_role" "app-runner-role" {
+  name = "app-runner-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          "Service" = "build.apprunner.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+  ]
   tags = {
     IAC = "True"
   }
 }
+
 
 resource "aws_iam_role" "ecr-role" {
   name = "ecr-role"
@@ -23,12 +42,12 @@ resource "aws_iam_role" "ecr-role" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:https://github.com/SamuelRodrigues29/devops-project:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:SamuelRodrigues29/devops-project:ref:refs/heads/main"
           }
         }
         Effect = "Allow"
         Principal = {
-          Federated = "arn:aws:iam::403429280851:oidc-provider/token.actions.githubusercontent.com"
+          Federated = data.aws_iam_openid_connect_provider.oidc-git.arn
         }
       }
     ]

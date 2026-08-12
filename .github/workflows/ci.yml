@@ -49,6 +49,10 @@ jobs:
     - name: Enable Corepack
       working-directory: api
       run: corepack enable
+      
+    - name: Install dependencies
+      working-directory: api
+      run: yarn install
 
     - name: Run tests
       working-directory: api

@@ -46,9 +46,13 @@ jobs:
         cache: 'yarn'
         cache-dependency-path: api/yarn.lock
 
+    - name: Enable Corepack
+      working-directory: api
+      run: corepack enable
+
     - name: Run tests
-      working-directory: api  
-      run: yarn run test    
+      working-directory: api
+      run: yarn run test
    
 
     - name: Generate tag

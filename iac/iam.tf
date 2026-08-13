@@ -14,11 +14,7 @@ resource "aws_iam_openid_connect_provider" "github" {
   }
 }
 
-# 2. Apenas o ECR existente é importado
-import {
-  to = aws_ecr_repository.devops_project
-  id = "devops-project"
-}
+
 
 # 3. Repositório ECR
 resource "aws_ecr_repository" "devops_project" {

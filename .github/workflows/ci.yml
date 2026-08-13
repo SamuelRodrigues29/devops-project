@@ -64,6 +64,12 @@ jobs:
       run: | 
        SHA=$(echo $GITHUB_SHA | head -c7)
        echo "sha=$SHA" >> $GITHUB_OUTPUT  
+       
+    - name: Debug OIDC Token Subject
+      run: |
+        echo "Ref: ${{ github.ref }}"
+        echo "Repository: ${{ github.repository }}"
+        echo "Expected sub claim: repo:${{ github.repository }}:ref:${{ github.ref }}"   
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4

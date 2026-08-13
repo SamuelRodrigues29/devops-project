@@ -1,9 +1,15 @@
-# 1. Provedor OIDC do GitHub já existente
+# 1. Provedor OIDC já existente
 data "aws_iam_openid_connect_provider" "oidc-git" {
   url = "https://token.actions.githubusercontent.com"
 }
 
-# 2. Criação do Repositório ECR
+# 2. Apenas o ECR será importado (pois ele já existe na AWS)
+import {
+  to = aws_ecr_repository.devops_project
+  id = "devops-project"
+}
+
+# 3. Repositório ECR
 resource "aws_ecr_repository" "devops_project" {
   name                 = "devops-project"
   image_tag_mutability = "MUTABLE"
@@ -17,7 +23,7 @@ resource "aws_ecr_repository" "devops_project" {
   }
 }
 
-# 3. Role IAM para o GitHub Actions
+# 4. Role IAM para GitHub Actions (Será CRIADA do zero pelo Terraform)
 resource "aws_iam_role" "ecr_role" {
   name = "ecr-role"
 
@@ -33,17 +39,13 @@ resource "aws_iam_role" "ecr_role" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+            "token.actions.githubusercontent.com:sub" = "repo:SamuelRodrigues29/devops-project:ref:refs/heads/master"
           }
-          StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:SamuelRodrigues29/devops-project:*"
-          }
-            
-          }
-        }      
+        }
+      }
     ]
   })
 
-  # Permissão padrão para ler, autenticar, criar tags e publicar no ECR
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
   ]

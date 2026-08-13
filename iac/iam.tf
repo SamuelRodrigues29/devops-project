@@ -3,7 +3,12 @@ data "aws_iam_openid_connect_provider" "oidc-git" {
   url = "https://token.actions.githubusercontent.com"
 }
 
-# 2. Apenas o ECR será importado (pois ele já existe na AWS)
+# 2. Blocos de IMPORT AUTOMÁTICO (O Terraform cuida da vinculação sozinho)
+import {
+  to = aws_iam_role.ecr_role
+  id = "ecr-role"
+}
+
 import {
   to = aws_ecr_repository.devops_project
   id = "devops-project"
@@ -23,7 +28,7 @@ resource "aws_ecr_repository" "devops_project" {
   }
 }
 
-# 4. Role IAM para GitHub Actions (Será CRIADA do zero pelo Terraform)
+# 4. Role IAM para GitHub Actions
 resource "aws_iam_role" "ecr_role" {
   name = "ecr-role"
 
@@ -54,3 +59,4 @@ resource "aws_iam_role" "ecr_role" {
     IAC = "True"
   }
 }
+

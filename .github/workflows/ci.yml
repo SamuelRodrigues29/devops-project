@@ -64,7 +64,7 @@ jobs:
       run: | 
        SHA=$(echo $GITHUB_SHA | head -c7)
        echo "sha=$SHA" >> $GITHUB_OUTPUT  
-       
+
     - name: Debug OIDC Token Subject
       run: |
         echo "Ref: ${{ github.ref }}"
@@ -72,7 +72,7 @@ jobs:
         echo "Expected sub claim: repo:${{ github.repository }}:ref:${{ github.ref }}"   
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v6.2.3
       with:        
         role-to-assume: 'arn:aws:iam::905418028782:role/ecr-role'
         aws-region: us-east-2

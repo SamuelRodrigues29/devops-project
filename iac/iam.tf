@@ -33,10 +33,13 @@ resource "aws_iam_role" "ecr_role" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:https://github.com/SamuelRodrigues29/devops-project:ref:refs/heads/master"
           }
-        }
-      }
+          StringLike = {
+            "token.actions.githubusercontent.com:sub" = "repo:SamuelRodrigues29/devops-project:*"
+          }
+            
+          }
+        }      
     ]
   })
 

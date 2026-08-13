@@ -1,43 +1,34 @@
-# Provider already exists in this AWS account — reference it instead of creating it.
+# 1. Provedor OIDC do GitHub já existente
 data "aws_iam_openid_connect_provider" "oidc-git" {
   url = "https://token.actions.githubusercontent.com"
 }
 
-import {
-  to = aws_iam_role.ecr-role
-  id = "ecr-role"
-}
+# 2. Criação do Repositório ECR
+resource "aws_ecr_repository" "devops_project" {
+  name                 = "devops-project"
+  image_tag_mutability = "MUTABLE"
 
-resource "aws_iam_role" "app-runner-role" {
-  name = "app-runner-role"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          "Service" = "build.apprunner.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      }
-    ]
-  })
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-  ]
   tags = {
     IAC = "True"
   }
 }
 
-
-resource "aws_iam_role" "ecr-role" {
+# 3. Role IAM para o GitHub Actions
+resource "aws_iam_role" "ecr_role" {
   name = "ecr-role"
 
   assume_role_policy = jsonencode({
+    Version = "2012-10-17"
     Statement = [
       {
+        Effect = "Allow"
+        Principal = {
+          Federated = data.aws_iam_openid_connect_provider.oidc-git.arn
+        }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
           StringEquals = {
@@ -45,14 +36,15 @@ resource "aws_iam_role" "ecr-role" {
             "token.actions.githubusercontent.com:sub" = "repo:SamuelRodrigues29/devops-project:ref:refs/heads/master"
           }
         }
-        Effect = "Allow"
-        Principal = {
-          Federated = data.aws_iam_openid_connect_provider.oidc-git.arn
-        }
       }
     ]
-    Version = "2012-10-17"
   })
+
+  # Permissão padrão para ler, autenticar, criar tags e publicar no ECR
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+  ]
+
   tags = {
     IAC = "True"
   }

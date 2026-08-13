@@ -81,8 +81,8 @@ jobs:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         TAG: ${{ steps.generate_tag.outputs.sha }}
       run: |
-       docker build -t $REGISTRY/devops-project:$TAG .
-       docker push $REGISTRY/devops-project:$TAG 
+       docker build -t $REGISTRY/devops-project:$TAG ./api
+       docker push $REGISTRY/devops-project:$TAG  ./api
        IMAGE=${echo $REGISTRY/devops-project:$TAG}
        echo "image=$IMAGE" >> $GITHUB_OUTPUT
 

@@ -43,21 +43,10 @@ jobs:
         # Utiliza a versão do Node definida na matriz
         node-version: 24
         # Habilita cache das dependências do Yarn
-        cache: 'yarn'
-        cache-dependency-path: api/yarn.lock
-
-    - name: Enable Corepack
-      working-directory: api
-      run: corepack enable
+        cache: 'yarn'      
       
-    - name: Install dependencies
-      working-directory: api
-      run: yarn install
-
-    - name: Run tests
-      working-directory: api
-      run: yarn run test
-   
+    - run: yarn       
+    - run: yarn run test       
 
     - name: Generate tag
       id: generate_tag

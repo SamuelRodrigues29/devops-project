@@ -1,9 +1,9 @@
-# 1. Consulta o Provedor OIDC existente (informando apenas a URL ou ARN)
+# 1. Consulta o Provedor OIDC existente
 data "aws_iam_openid_connect_provider" "github" {
   url = "https://token.actions.githubusercontent.com"
 }
 
-# 2. Cria a IAM Role usando o underline (ecr_role)
+# 2. Cria a IAM Role usando underline (ecr_role)
 resource "aws_iam_role" "ecr_role" {
   name = "ecr-role"
 
@@ -12,10 +12,10 @@ resource "aws_iam_role" "ecr_role" {
     Statement = [
       {
         Effect = "Allow"
-        Action = "sts:AssumeRoleWithWebIdentity"
         Principal = {
           Federated = data.aws_iam_openid_connect_provider.github.arn
         }
+        Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"

@@ -1,11 +1,8 @@
-# OIDC provider already exists in most AWS accounts — look it up instead of recreating it.
-data "aws_iam_openid_connect_provider" "github" {
-  url = "https://token.actions.githubusercontent.com"
-}
-
-import {
-  to = aws_iam_role.ecr-role
-  id = "ecr-role"
+# Cria o OIDC Provider do GitHub Actions na conta AWS
+resource "aws_iam_openid_connect_provider" "github" {
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1", "1c58a21d2c70017297aef87102220f836f6d0f68"]
 }
 
 resource "aws_iam_role" "ecr-role" {
@@ -18,7 +15,7 @@ resource "aws_iam_role" "ecr-role" {
         Effect = "Allow"
         Action = "sts:AssumeRoleWithWebIdentity"
         Principal = {
-          Federated = data.aws_iam_openid_connect_provider.github.arn
+          Federated = aws_iam_openid_connect_provider.github.arn
         }
         Condition = {
           StringEquals = {

@@ -8,6 +8,7 @@ on:
     # Apenas para a branch main
     branches:
       - master
+      - main
 
 permissions: 
   id-token: write

@@ -24,6 +24,9 @@ jobs:
 
     # Runner (máquina virtual) onde o job será executado
     runs-on: ubuntu-latest    
+    defaults: 
+      run: 
+        working-directory: ./api
 
     # Sequência de etapas do job
     steps:
@@ -43,7 +46,8 @@ jobs:
         # Utiliza a versão do Node definida na matriz
         node-version: 24
         # Habilita cache das dependências do Yarn
-        cache: 'yarn'      
+        cache: 'yarn'   
+        cache-dependency-path: './api/yarn.lock'   
       
     - run: yarn       
     - run: yarn run test       
@@ -77,8 +81,8 @@ jobs:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         TAG: ${{ steps.generate_tag.outputs.sha }}
       run: |
-       docker build -t $REGISTRY/devops-project:$TAG ./api
-       docker push $REGISTRY/devops-project:$TAG  ./api
+       docker build -t $REGISTRY/devops-project:$TAG .
+       docker push $REGISTRY/devops-project:$TAG  
        IMAGE=${echo $REGISTRY/devops-project:$TAG}
        echo "image=$IMAGE" >> $GITHUB_OUTPUT
 

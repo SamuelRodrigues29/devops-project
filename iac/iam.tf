@@ -1,11 +1,10 @@
-# Cria o OIDC Provider do GitHub Actions na conta AWS
-resource "aws_iam_openid_connect_provider" "github" {
-  url             = "https://token.actions.githubusercontent.com"
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1", "1c58a21d2c70017297aef87102220f836f6d0f68"]
+# 1. Consulta o Provedor OIDC existente (informando apenas a URL ou ARN)
+data "aws_iam_openid_connect_provider" "github" {
+  url = "https://token.actions.githubusercontent.com"
 }
 
-resource "aws_iam_role" "ecr-role" {
+# 2. Cria a IAM Role usando o underline (ecr_role)
+resource "aws_iam_role" "ecr_role" {
   name = "ecr-role"
 
   assume_role_policy = jsonencode({
@@ -15,53 +14,55 @@ resource "aws_iam_role" "ecr-role" {
         Effect = "Allow"
         Action = "sts:AssumeRoleWithWebIdentity"
         Principal = {
-          Federated = aws_iam_openid_connect_provider.github.arn
+          Federated = data.aws_iam_openid_connect_provider.github.arn
         }
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:SamuelRodrigues29/devops-project:*"
+            "token.actions.githubusercontent.com:sub" = "repo:SamuelRodrigues29@141246622/devops-project@1316030481:*"
           }
         }
       }
     ]
   })
 
-  inline_policy {
-    name = "ecr-app-permission"
-
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Effect = "Allow"
-          Action = [
-            "ecr:GetAuthorizationToken",
-            "ecr:BatchCheckLayerAvailability",
-            "ecr:GetDownloadUrlForLayer",
-            "ecr:GetRepositoryPolicy",
-            "ecr:DescribeRepositories",
-            "ecr:ListImages",
-            "ecr:DescribeImages",
-            "ecr:BatchGetImage",
-            "ecr:GetLifecyclePolicy",
-            "ecr:GetLifecyclePolicyPreview",
-            "ecr:ListTagsForResource",
-            "ecr:DescribeImageScanFindings",
-            "ecr:InitiateLayerUpload",
-            "ecr:UploadLayerPart",
-            "ecr:CompleteLayerUpload",
-            "ecr:PutImage"
-          ]
-          Resource = "*"
-        }
-      ]
-    })
-  }
-
   tags = {
     IAC = "True"
   }
+}
+
+# 3. Anexa as permissões do ECR referente ao aws_iam_role.ecr_role
+resource "aws_iam_role_policy" "ecr_role_policy" {
+  name = "ecr-app-permission"
+  role = aws_iam_role.ecr_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetRepositoryPolicy",
+          "ecr:DescribeRepositories",
+          "ecr:ListImages",
+          "ecr:DescribeImages",
+          "ecr:BatchGetImage",
+          "ecr:GetLifecyclePolicy",
+          "ecr:GetLifecyclePolicyPreview",
+          "ecr:ListTagsForResource",
+          "ecr:DescribeImageScanFindings",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:PutImage"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }

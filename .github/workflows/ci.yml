@@ -92,13 +92,11 @@ jobs:
        IMAGE=${echo $REGISTRY/devops-project:$TAG}
        echo "image=$IMAGE" >> $GITHUB_OUTPUT
 
-    - name: Deploy to ECR
-      uses: awslabs/amazon-app-runner-deploy@main
+    - name: Deploy to ECS
+      uses: aws-actions/amazon-ecs-deploy-express-service@v1
       with:
-        service: devops-project
+        service-name: devops-project
         image: ${{ steps.build-docker-image.outputs.image }}
-        access-role-arn: arn:aws:iam::905418028782:role/ecr-role
-        region: us-east-2
-        cpu: 1
-        memory: 2
-        port: 3000
+        execution-role-arn: arn:aws:iam::905418028782:role/ecs-execution-role
+        infrastructure-role-arn: arn:aws:iam::905418028782:role/ecs-infrastructure-role
+        
